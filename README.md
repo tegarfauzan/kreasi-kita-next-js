@@ -17,12 +17,12 @@ Jangan commit `.env`. Kredensial seed hanya untuk lokal dan wajib berbeda dari p
 - `npm run typecheck` — validasi TypeScript.
 - `npm test` — unit tests.
 - `npm run build` — production build biasa.
-- `npm run build:hostinger` — deploy migration, generate Prisma Client, lalu build Next.js.
+- `npm run build:hostinger` — generate Prisma Client lalu build Next.js untuk Hostinger.
 - `npm run db:deploy` — terapkan migration yang sudah direview.
+- `npm run db:seed:production` — isi katalog production-safe tanpa akun demo.
 
 Perintah deployment tambahan:
 
-- `npm run build:hostinger:first` - deployment pertama dengan seed katalog production-safe.
 - `GET /api/health` - readiness aplikasi dan database tanpa detail internal.
 - `POST /api/setup/admin` - bootstrap admin production satu kali; wajib dinonaktifkan setelah digunakan.
 

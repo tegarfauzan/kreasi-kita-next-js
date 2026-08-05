@@ -4,11 +4,11 @@
 
 ```text
 feature branch -> pull request -> GitHub Actions -> merge main
-  -> Hostinger auto-deploy -> Prisma migration -> Next.js build
+  -> migration production terkontrol -> Hostinger auto-deploy -> Next.js build
   -> https://kreasi-kita.tegarfauzan.com
 ```
 
-Gunakan Node.js 22, framework Next.js, root directory `./`, branch `main`, dan start command `npm start`.
+Gunakan Node.js 22, framework Next.js, root directory `./`, branch `main`, build command `npm run build:hostinger`, dan start command `npm start`.
 
 ## Pemeriksaan sebelum commit pertama
 
@@ -30,7 +30,6 @@ Gunakan Node.js 22, framework Next.js, root directory `./`, branch `main`, dan s
 
 Masukkan environment langsung melalui hPanel dan redeploy setelah perubahan. Jangan mengunggah `.env` lokal atau menyimpan production secret di GitHub.
 
-- `NODE_ENV=production`
 - `NEXT_PUBLIC_APP_URL=https://kreasi-kita.tegarfauzan.com`
 - `BETTER_AUTH_URL=https://kreasi-kita.tegarfauzan.com`
 - `DATABASE_URL` dan `DATABASE_*` dari MySQL Hostinger
@@ -46,16 +45,17 @@ Jangan mengisi `SEED_ADMIN_*` atau `SEED_CUSTOMER_*` di production.
 
 ## Deployment pertama dan deployment rutin
 
-Deployment pertama memakai `npm run build:hostinger:first`. Perintah ini menjalankan migration dan seed katalog produksi yang tidak menimpa data yang sudah ada.
+Build container Hostinger tidak dapat mengakses MySQL shared melalui `localhost`. Karena itu, jangan menjalankan migration atau seed di build command. Terapkan migration secara terkontrol dari runner yang diberi akses MySQL sementara, lalu cabut kembali akses tersebut. Jalankan `npm run db:deploy` dan `npm run db:seed:production` sebelum deployment pertama.
+
+Build Hostinger selalu memakai `npm run build:hostinger`. Jangan menetapkan `NODE_ENV=production` secara manual pada environment build karena npm dapat melewatkan dependency kompilasi; Next.js akan memakai mode production saat build/start.
 
 Setelah deployment pertama berhasil:
 
-1. Ubah build command menjadi `npm run build:hostinger`.
-2. Buka `/api/health` dan pastikan respons `{"status":"ok"}`.
-3. Buat admin pertama melalui `POST /api/setup/admin` dengan Bearer bootstrap token.
-4. Segera ubah `ADMIN_BOOTSTRAP_ENABLED=false`, hapus `ADMIN_BOOTSTRAP_TOKEN`, lalu redeploy.
+1. Buka `/api/health` dan pastikan respons `{"status":"ok"}`.
+2. Buat admin pertama melalui `POST /api/setup/admin` dengan Bearer bootstrap token.
+3. Segera ubah `ADMIN_BOOTSTRAP_ENABLED=false`, hapus `ADMIN_BOOTSTRAP_TOKEN`, lalu redeploy.
 
-Deployment rutin hanya menjalankan migration yang telah direview dan production build. Migration wajib backward-compatible; gunakan forward-fix jika terjadi masalah.
+Untuk deployment rutin, terapkan migration yang telah direview sebelum deploy kode yang bergantung padanya. Migration wajib backward-compatible; gunakan forward-fix jika terjadi masalah.
 
 ## Midtrans dan scheduler
 

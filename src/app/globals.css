@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-yellow: #f5a623;
+  --color-ink-black: #1c1c1c;
+  --color-canvas-gray: #ececec;
+  --color-pure-white: #ffffff;
+  --color-body-gray: #4a4a4a;
+  --color-status-success: #2e7d32;
+  --color-status-error: #d64545;
+  --color-status-info: #2563eb;
+  --color-status-pending: #9ca3af;
+  --font-display: var(--font-baloo), sans-serif;
+  --font-body: var(--font-jakarta), sans-serif;
+  --font-accent: var(--font-caveat), cursive;
+}
+
+@layer base {
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { @apply min-h-screen bg-canvas-gray font-body text-body-gray antialiased; }
+  button, a, input, select, textarea { @apply focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-brand-yellow; }
+  button { @apply cursor-pointer; }
+  button:disabled { @apply cursor-not-allowed; }
+  ::selection { @apply bg-brand-yellow text-ink-black; }
+}
+
+@layer components {
+  .page-shell { @apply mx-auto w-full max-w-7xl px-5 sm:px-8 lg:px-10; }
+  .btn-primary { @apply inline-flex items-center justify-center gap-2 rounded-full bg-brand-yellow px-7 py-3.5 font-bold text-ink-black transition duration-150 ease-out hover:scale-[1.02] hover:bg-ink-black hover:text-brand-yellow disabled:opacity-50; }
+  .btn-secondary { @apply inline-flex items-center justify-center gap-2 rounded-full border-2 border-ink-black bg-transparent px-6 py-3 font-bold text-ink-black transition duration-150 ease-out hover:bg-ink-black hover:text-white; }
+  .btn-dark { @apply inline-flex items-center justify-center gap-2 rounded-full bg-ink-black px-6 py-3 font-bold text-white transition hover:bg-brand-yellow hover:text-ink-black; }
+  .product-card { @apply overflow-hidden rounded-2xl bg-white shadow-[0_14px_40px_rgba(28,28,28,0.08)] transition duration-150 ease-out hover:-translate-y-1 hover:shadow-[0_20px_48px_rgba(28,28,28,0.14)]; }
+  .form-label { @apply mb-2 block text-xs font-bold uppercase tracking-[0.16em] text-ink-black; }
+  .form-input { @apply w-full rounded-xl border border-black/20 bg-white px-4 py-3.5 text-ink-black placeholder:text-body-gray/55 focus:border-brand-yellow focus:ring-4 focus:ring-brand-yellow/20; }
+  .form-error { @apply mt-1.5 text-sm font-semibold text-status-error; }
+  .filter-chip { @apply rounded-full border-2 border-ink-black px-5 py-2.5 text-sm font-bold text-ink-black transition hover:bg-ink-black hover:text-white; }
+  .filter-chip-active { @apply border-brand-yellow bg-brand-yellow text-ink-black hover:border-ink-black hover:bg-ink-black hover:text-brand-yellow; }
+  .admin-card { @apply rounded-2xl border border-black/8 bg-white p-5 shadow-[0_10px_30px_rgba(28,28,28,0.05)]; }
+  .admin-nav-link { @apply flex items-center gap-3 rounded-xl px-4 py-3 font-semibold text-white/65 transition hover:bg-white/10 hover:text-white; }
+  .admin-nav-active { @apply bg-brand-yellow text-ink-black hover:bg-brand-yellow hover:text-ink-black; }
+}
+
+.hero-grid {
+  background-image: linear-gradient(rgba(28, 28, 28, 0.045) 1px, transparent 1px), linear-gradient(90deg, rgba(28, 28, 28, 0.045) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+.hand-drawn-circle { border-radius: 48% 52% 46% 54% / 52% 43% 57% 48%; }
+[hidden] { display: none !important; }
+
+@media (min-width: 64rem) {
+  .admin-layout {
+    display: grid;
+    grid-template-columns: 17rem minmax(0, 1fr);
+    transition: grid-template-columns 200ms ease-out;
+  }
+
+  .admin-layout[data-sidebar-collapsed="true"] { grid-template-columns: 0 minmax(0, 1fr); }
+  .admin-layout[data-sidebar-collapsed="true"] [data-admin-sidebar] {
+    pointer-events: none;
+    visibility: hidden;
+    translate: -100% 0;
+  }
+}

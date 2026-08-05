@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+
+# Next.js build output
+.next/
+out/
+
+# Legacy or local build output
+dist/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Generated Prisma Client (regenerated during install/build)
+src/generated/prisma/
+
+# Test output
+coverage/
+playwright-report/
+test-results/
+
+# Environment files (keep documented examples)
+.env*
+!.env.example
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor and operating-system files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

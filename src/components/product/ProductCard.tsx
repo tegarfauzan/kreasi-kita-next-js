@@ -1,0 +1,8 @@
+import Image from "next/image";
+import Link from "next/link";
+import type { Product } from "@/types";
+import { formatCurrency } from "@/lib/format";
+
+export function ProductCard({ product }: { product: Product }) {
+  return <article className="product-card"><Link href={`/catalog/${product.slug}`} className="group relative block aspect-square overflow-hidden bg-white" aria-label={`Lihat detail ${product.name}`}><Image src={product.imageUrl} alt={product.imageAlt} fill sizes="(min-width:1280px) 25vw, (min-width:640px) 50vw, 100vw" quality={80} loading={product.featured ? "eager" : "lazy"} className="object-cover transition duration-300 group-hover:scale-105" />{product.badge && <span className="absolute left-4 top-4 rounded-full bg-brand-yellow px-3 py-1 text-xs font-bold text-ink-black">{product.badge}</span>}</Link><div className="p-5"><p className="text-xs font-bold uppercase tracking-[0.16em] text-body-gray">{product.category}</p><h3 className="mt-2 font-display text-2xl font-bold text-ink-black"><Link href={`/catalog/${product.slug}`} className="hover:underline hover:decoration-brand-yellow hover:decoration-4">{product.name}</Link></h3><p className="mt-2 line-clamp-2 text-sm leading-6">{product.description}</p><div className="mt-5 flex items-center justify-between gap-3"><p className="font-bold text-ink-black underline decoration-brand-yellow decoration-4 underline-offset-4">{formatCurrency(product.price)}</p><Link href={`/catalog/${product.slug}`} className="rounded-full bg-ink-black px-4 py-2 text-xs font-bold text-white transition hover:bg-brand-yellow hover:text-ink-black">Detail</Link></div></div></article>;
+}

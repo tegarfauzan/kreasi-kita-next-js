@@ -1,0 +1,501 @@
+====================================================================
+PANDUAN UI/UX WEBSITE
+Web E-Commerce-Mini — "Bold Creative" Visual Style
+====================================================================
+Referensi Gaya : example-design-guide.jpg (Portfolio "Creative Visual")
+Disusun oleh   : UI/UX Designer
+Status         : Siap Prompt (Frontend Development Reference)
+====================================================================
+
+
+0. DESKRIPSI (SUASANA, SENTUHAN, VIBE, HIPERBOLA, GAYA VISUAL,
+   KARAKTER BRAND, MOOD, KEYWORDS)
+
+0.1 Analisis Referensi Visual (breakdown dari gambar yang dikirim)
+Sebelum menentukan gaya, berikut elemen visual yang secara spesifik
+diambil dari referensi (bukan asumsi):
+- Palet warna hanya 3 nada: kuning mustard tegas, hitam pekat, dan
+  abu-abu terang/putih sebagai kanvas. Tidak ada warna lain yang
+  bersaing.
+- Fotografi hitam-putih (duotone/grayscale) untuk foto orang, dipadukan
+  dengan blok/lingkaran kuning solid di belakang subjek sebagai aksen
+  pop-color.
+- Tipografi judul besar, tebal, dan membulat (rounded bold display
+  font) — huruf terasa "gemuk" dan percaya diri, bukan tipis/elegan.
+- Ada aksen tulisan tangan/miring (script/italic) untuk tagline kecil
+  ("Creative Visual") — kontras dengan huruf judul yang tebal.
+- Tanda kutip besar (") dipakai sebagai elemen dekoratif di depan
+  headline, memberi kesan "kutipan personal/pernyataan sikap".
+- Ikon doodle/sketsa tangan (kamera, lampu, gerigi, monitor) tersebar
+  bebas di sekitar headline sebagai elemen dekoratif, bukan ikon
+  fungsional.
+- Angka besar bergaya outline/ghost ("01", "03") digunakan sebagai
+  penanda section di pojok halaman.
+- Badge/kartu navigasi berbentuk rounded-square kuning berisi ikon
+  solid + label di bawahnya (lihat blok "Graphic Design / Photographer
+  / Videographer / Video & Photo Editor") — ini pola yang sangat kuat
+  dan reusable untuk navigasi kategori.
+- Garis pembatas tipis horizontal digunakan untuk memisahkan section
+  secara ringan, bukan garis tebal/berat.
+- Foto profil dipotong lingkaran (circle crop), diletakkan di atas
+  blok warna kuning solid sehingga foto "mengambang" di atas warna.
+- Layout asimetris, banyak white space, blok teks & visual tidak
+  simetris tapi tetap seimbang (editorial layout, bukan grid kaku).
+
+0.2 Suasana
+Berani, hangat, dan personal — seperti membuka etalase toko kreatif
+milik seseorang yang punya karakter, bukan marketplace korporat yang
+dingin dan generik.
+
+0.3 Sentuhan
+Sentuhan tangan (handcrafted) terasa lewat doodle sketsa yang
+berserakan di sela layout dan tipografi script — memberi kesan
+"dibuat dengan niat", bukan template e-commerce pasaran.
+
+0.4 Vibe
+Creative-professional. Energik dan percaya diri secara visual, namun
+tetap rapi, jelas, dan bisa dipercaya saat masuk ke area transaksi
+(checkout & pembayaran).
+
+0.5 Hiperbola
+"Belanja di sini harus terasa seperti membuka portofolio kreatif
+seseorang — setiap produk adalah karya, setiap klik punya karakter."
+(Dipakai sebagai kalimat panduan rasa/mood, bukan copy final di
+halaman.)
+
+0.6 Gaya Visual
+Bold minimalist dengan aksen ilustrasi tangan. Fotografi produk
+duotone/hitam-putih untuk konten storytelling (hero, brand story),
+dipadukan satu warna aksen kuning mustard yang berani. Tipografi
+tebal-membulat sebagai identitas utama, dilengkapi elemen dekoratif
+khas referensi: angka ghost besar, tanda kutip besar, badge bulat/
+rounded-square kuning untuk navigasi.
+
+0.7 Karakter Brand
+Percaya diri, kreatif, hangat, approachable, sedikit playful — tapi
+tidak norak, dan tetap kredibel untuk transaksi uang sungguhan.
+
+0.8 Mood Keywords (moodboard)
+Bold. Warm. Handcrafted. Confident. Playful-professional.
+Monochrome+Pop. Editorial. Creative Studio. Personal Touch.
+
+0.9 Keywords
+#BoldMinimalist #DoodleAccent #DuotonePhotography #MustardYellow
+#BlackWhitePop #HandcraftedDigital #CreativeCommerce
+#EditorialLayout #ConfidentTypography #RoundedBoldType
+
+
+1. PAGE HIERARCHY
+
+Level 0 — Root
+ └─ Web E-Commerce-Mini
+     │
+     ├─ LEVEL 1 — Public Zone (bebas dekorasi, brand tampil penuh)
+     │   ├─ Homepage         (bobot visual TERTINGGI — hero, doodle,
+     │   │                     ghost number, full brand expression)
+     │   ├─ Catalog           (brand tetap terasa lewat warna & tipografi,
+     │   │                     tapi dekorasi doodle dikurangi demi
+     │   │                     kejelasan fungsi cari/filter)
+     │   ├─ Detail Produk      (fokus ke foto produk asli/berwarna,
+     │   │                     brand hadir lewat CTA & badge saja)
+     │   ├─ Login
+     │   └─ Register
+     │
+     ├─ LEVEL 2 — Customer Zone (Auth required, dekorasi diredam)
+     │   ├─ Checkout            (dekorasi MINIMAL — prioritas
+     │   │                       kepercayaan & kecepatan, bukan estetika)
+     │   ├─ Midtrans Payment    (di luar kendali kita — halaman bawaan
+     │   │                       Midtrans)
+     │   └─ Riwayat Pesanan
+     │
+     └─ LEVEL 3 — Admin Zone (Auth + role admin, dekorasi hampir nihil)
+         ├─ Admin Dashboard     (CRUD via modal — fungsi > estetika,
+         │                       warna brand tetap dipakai sbg token,
+         │                       bukan sbg dekorasi)
+         └─ Settings
+
+Prinsip Reduksi Dekorasi pada Alur Transaksional:
+Semakin dalam pengguna masuk ke alur uang (checkout → pembayaran) dan
+semakin operasional halamannya (admin), semakin sedikit elemen
+dekoratif (doodle, ghost number, tanda kutip besar) yang ditampilkan.
+Warna, tipografi, dan komponen tetap konsisten sebagai identitas —
+tapi "keriuhan visual" diturunkan supaya pengguna fokus pada tugasnya.
+
+
+2. USER FLOW
+
+2.1 Customer Flow (dengan catatan pengalaman visual per langkah)
+
+[Homepage] → [Catalog] → [Detail Produk] → [Login/Register]
+   → [Checkout] → [Midtrans Payment] → [Redirect] → [Homepage]
+
+Langkah & catatan desain:
+1. Homepage — brand experience penuh: hero besar, doodle, ghost
+   number, badge kategori bulat kuning (lihat referensi "Table of
+   Content").
+2. Catalog — transisi ke mode "fungsional": grid produk rapi, search
+   bar jelas, filter chip kuning-hitam, doodle nyaris hilang.
+3. Detail Produk — foto produk asli (berwarna) jadi fokus utama;
+   badge kuning kecil untuk info tambahan ("Baru", stok terbatas,
+   dsb).
+4. Login/Register — split layout: sisi kiri form fungsional bersih,
+   sisi kanan panel warna kuning solid dengan 1 elemen doodle besar
+   sebagai penyeimbang (mengikuti pola foto-di-atas-blok-warna pada
+   referensi).
+5. Checkout — dekorasi minimal, hierarki jelas: ringkasan pesanan,
+   total harga besar & tebal, 1 tombol CTA kuning dominan, tanpa
+   distraksi doodle.
+6. Redirect ke Midtrans — di luar kendali desain kita.
+7. Kembali ke Homepage — brand experience penuh kembali, memberi
+   penutup yang hangat (mis. toast/banner kuning "Terima kasih!").
+
+2.2 Admin Flow
+
+[Login] → [Admin Panel: CRUD via Modal] → [Settings] → [Logout]
+
+Langkah & catatan desain:
+1. Login admin — form sama dengan customer, tanpa panel dekoratif
+   (admin butuh cepat masuk, bukan "wow" pertama kali).
+2. Admin Panel — layout tabel bersih (putih/abu), aksen kuning hanya
+   pada tombol aksi utama (Tambah, Simpan) dan status badge.
+3. Modal CRUD (Tambah/Edit Produk & Kategori) — muncul di atas
+   halaman (overlay gelap transparan), kartu modal putih rounded,
+   judul modal tebal hitam dengan garis aksen kuning tipis di
+   bawahnya (turunan dari pola divider tipis di referensi).
+4. Settings — form sederhana, tanpa dekorasi tambahan.
+5. Logout — konfirmasi ringan, kembali ke halaman Login.
+
+
+3. INFORMATION ARCHITECTURE
+
+3.1 Elemen Global
+- Navbar (Public & Customer): logo (wordmark hitam + titik aksen
+  kuning), search, menu, ikon akun, ikon keranjang/checkout.
+- Navbar (Admin): logo, nama halaman aktif, avatar admin, tombol
+  logout.
+- Footer (Public): blok hitam solid (mengikuti gaya blok warna pada
+  referensi), teks putih & kuning, kolom: Brand, Navigasi, Kontak,
+  Sosial Media.
+
+3.2 Homepage
+- Hero Section: headline besar + tanda kutip aksen, sub-tagline gaya
+  script, 1 CTA utama, foto/ilustrasi produk dalam bingkai lingkaran
+  di atas blok kuning, ghost number "01" di sudut.
+- Kategori Strip: baris badge rounded-square kuning berisi ikon +
+  label (pola langsung dari "Table of Content" pada referensi).
+- Produk Unggulan: grid card produk (foto asli berwarna, badge kecil,
+  nama, harga, CTA singkat).
+- Brand Story Strip (opsional, ringan): potongan narasi singkat brand
+  dengan foto duotone kecil — bukan halaman terpisah, hanya section.
+- Footer.
+
+3.3 Catalog
+- Search bar (full width, rounded, ikon kaca pembesar).
+- Filter kategori (chip pill, aktif = kuning solid, non-aktif =
+  outline hitam tipis).
+- Grid produk (3-4 kolom desktop, 2 kolom tablet, 1 kolom mobile).
+- Pagination / infinite scroll (gaya angka bulat kecil, aktif =
+  kuning).
+
+3.4 Detail Produk
+- Galeri foto produk (foto asli berwarna, thumbnail di bawah/samping).
+- Info produk: nama (bold), harga (besar, tebal, underline kuning
+  tipis), deskripsi, badge stok.
+- Selector jumlah + tombol CTA "Beli Sekarang" (pill kuning penuh).
+
+3.5 Login / Register
+- Form (email, password, nama untuk register).
+- Panel visual pendamping: blok kuning solid + 1 doodle besar (mis.
+  ikon gembok/keranjang gaya sketsa).
+
+3.6 Checkout
+- Ringkasan produk (list item + qty + subtotal).
+- Total harga (besar, tebal, warna hitam dengan aksen kuning pada
+  angka).
+- Tombol "Bayar Sekarang" (pill kuning, ukuran besar, posisi paling
+  menonjol di halaman).
+- Tanpa doodle, tanpa ghost number — murni fungsional.
+
+3.7 Admin Dashboard
+- Sidebar/menu: Produk, Kategori, Pesanan, Settings.
+- Tabel data (header abu gelap/hitam, baris putih-abu berselang-seling
+  / zebra rows).
+- Tombol aksi utama (Tambah Produk/Kategori) = pill kuning solid di
+  kanan atas tabel.
+- Modal form untuk create/update.
+- Badge status pesanan berwarna fungsional (lihat 5.7).
+
+3.8 Settings
+- Form pengaturan dasar toko (nama toko, kontak, dsb) — layout
+  sederhana satu kolom.
+
+
+4. WIREFRAME (Low-Fidelity, ASCII)
+
+4.1 Homepage
++------------------------------------------------------------+
+| [Logo●]                       [Cari]   [Login]   [Cart]     |
++------------------------------------------------------------+
+|                                                              |
+|   "  BELANJA               (doodle bola lampu/kado)          |
+|      KREATIF.               ┌───────────────┐                |
+|   [kuning tebal]             │  foto produk   │ <- lingkaran   |
+|   -tagline gaya tulisan-     │  di atas blok  │    kuning       |
+|    tangan miring-            │  kuning solid  │                |
+|   [ Belanja Sekarang -> ]    └───────────────┘                |
+|                                                        01      |
++------------------------------------------------------------+
+|  ----------------------------- Kategori ------------------>  |
+|   (icon)     (icon)     (icon)     (icon)                    |
+|  Kategori A Kategori B Kategori C Kategori D                  |
+|  <- badge rounded-square kuning, mirip Table of Content ->    |
++------------------------------------------------------------+
+|  ------------------------- Produk Unggulan ---------------->  |
+|  [Card foto]  [Card foto]  [Card foto]  [Card foto]            |
+|  Nama+Harga    Nama+Harga    Nama+Harga    Nama+Harga           |
++------------------------------------------------------------+
+|  FOOTER (bg hitam solid, teks putih + aksen kuning)            |
+|  Logo | Navigasi | Kontak | Sosial Media                       |
++------------------------------------------------------------+
+
+4.2 Catalog
++------------------------------------------------------------+
+| [Logo●]                       [Cari]   [Login]   [Cart]     |
++------------------------------------------------------------+
+| [ Cari produk...            ]                                |
+| ( Semua ) ( Kategori A ) ( Kategori B ) ( Kategori C )        |
+|   <- chip aktif kuning solid, chip lain outline hitam ->      |
++------------------------------------------------------------+
+| [Card] [Card] [Card] [Card]                                   |
+| [Card] [Card] [Card] [Card]                                   |
+|                     ( 1 ) ( 2 ) ( 3 ) ...                     |
++------------------------------------------------------------+
+
+4.3 Detail Produk
++------------------------------------------------------------+
+| [Logo●]                       [Cari]   [Login]   [Cart]     |
++------------------------------------------------------------+
+|  ┌───────────────┐       Nama Produk (bold, besar)            |
+|  │  Foto Produk   │       Rp 000.000  (tebal, underline kuning)|
+|  │  (warna asli)  │       Deskripsi produk singkat...          |
+|  └───────────────┘       Stok: tersedia (badge kecil)          |
+|  [thumb][thumb][thumb]    Jumlah: [ - 1 + ]                    |
+|                            [   Beli Sekarang   ] <- pill kuning|
++------------------------------------------------------------+
+
+4.4 Checkout (dekorasi minimal)
++------------------------------------------------------------+
+| [Logo●]                                          [Cart]     |
++------------------------------------------------------------+
+|  Ringkasan Pesanan                                           |
+|  --------------------------------------------                |
+|  Produk A   x1                          Rp 000.000           |
+|  Produk B   x2                          Rp 000.000           |
+|  --------------------------------------------                |
+|  Total                                  Rp 000.000 (tebal)    |
+|                                                                |
+|             [      Bayar Sekarang      ]  <- pill kuning besar|
++------------------------------------------------------------+
+
+4.5 Admin Dashboard + Modal
++------------------------------------------------------------+
+| [Sidebar]  |  Produk                     [ + Tambah Produk ] |
+| - Produk   |  -------------------------------------------    |
+| - Kategori |  Nama       Kategori   Harga     Stok   Aksi     |
+| - Pesanan  |  Produk A   Kategori1  Rp000     10     [Edit][X]|
+| - Settings |  Produk B   Kategori2  Rp000     5      [Edit][X]|
++------------------------------------------------------------+
+        (saat klik Tambah/Edit, muncul modal di atas halaman)
+        +--------------------------------------+
+        |  Tambah Produk                    [X] |
+        |  ------------------------------------  | <- garis kuning tipis
+        |  Nama       : [____________]           |
+        |  Kategori   : [ dropdown    ]           |
+        |  Harga      : [____________]           |
+        |  Stok       : [____________]           |
+        |  Deskripsi  : [____________]           |
+        |  [ Batal ]           [ Simpan ]         |
+        +--------------------------------------+
+
+
+5. DESIGN SYSTEM / STYLE GUIDE
+
+5.1 Color Palette (token siap pakai untuk Tailwind config)
+
++------------------+-----------+----------------------------------+
+| Token            | Hex       | Penggunaan                        |
++------------------+-----------+----------------------------------+
+| brand-yellow      | #F5A623  | CTA utama, badge, highlight, 10%  |
+|                   |           | dari total komposisi warna        |
+| ink-black          | #1C1C1C  | Judul, teks utama, tombol gelap,  |
+|                   |           | footer bg — 30% komposisi         |
+| canvas-gray        | #ECECEC  | Background section — 60% komposisi|
+| pure-white          | #FFFFFF  | Card, form background             |
+| body-gray           | #4A4A4A  | Teks paragraf (bukan judul)       |
++------------------+-----------+----------------------------------+
+| Warna Fungsional (khusus status, TIDAK dipakai dekoratif)         |
++------------------+-----------+----------------------------------+
+| status-success      | #2E7D32 | Badge "Completed", notifikasi sukses|
+| status-error         | #D64545 | Validasi form gagal, "Failed"       |
+| status-info           | #2563EB | Badge "Processing"/"Shipped"        |
+| status-pending         | #9CA3AF | Badge "Pending"                     |
++------------------+-----------+----------------------------------+
+
+Aturan komposisi: 60% canvas-gray/white, 30% ink-black (teks &
+fotografi), 10% brand-yellow (aksen & CTA). Jangan pernah membalik
+rasio ini — kuning harus tetap terasa "langka & berharga", bukan
+memenuhi layar (kalau kuning dipakai berlebihan, brand terasa murah).
+
+Aturan kontras (wajib):
+- Teks di atas brand-yellow WAJIB warna ink-black. Teks putih di atas
+  kuning TIDAK BOLEH dipakai (kontras terlalu rendah, gagal WCAG AA).
+- Teks di atas ink-black WAJIB putih atau brand-yellow.
+
+5.2 Typography
+
++-------------------+---------------------------+------------------+
+| Peran             | Font (Google Fonts)        | Weight/Style      |
++-------------------+---------------------------+------------------+
+| Display / Headline  | Baloo 2 (atau Fredoka)     | ExtraBold/Bold    |
+|                     | — rounded, tebal, percaya  |                    |
+|                     | diri, sesuai referensi     |                    |
+| Body / UI Text       | Plus Jakarta Sans (atau     | Regular/Medium     |
+|                     | Inter) — bersih, mudah     |                    |
+|                     | dibaca untuk deskripsi     |                    |
+|                     | produk & form              |                    |
+| Aksen / Tagline       | Caveat (atau Kalam)         | Regular, italic     |
+|                     | — dipakai SANGAT terbatas,  |                    |
+|                     | hanya untuk tagline emosi  |                    |
+|                     | pendek (bukan body text)   |                    |
++-------------------+---------------------------+------------------+
+
+Skala ukuran (rem, basis 16px):
+H1 (Hero)      : 3.5rem / ExtraBold / line-height 1.1
+H2 (Section)    : 2.25rem / Bold
+H3 (Card/Modal) : 1.5rem / Bold
+Body             : 1rem / Regular
+Small/Caption     : 0.875rem / Medium
+
+5.3 Iconography
+Dua sistem ikon berbeda fungsi (langsung diturunkan dari referensi):
+a. Doodle Icon (dekoratif) — garis tangan/sketsa, stroke ~2px, warna
+   hitam di atas terang atau putih di atas gelap. Dipakai HANYA di
+   Homepage (hero, brand story). Contoh: kamera, kado, lampu, keranjang
+   sketsa.
+b. Solid Badge Icon (fungsional) — ikon flat/line sederhana di dalam
+   badge rounded-square kuning, meniru pola "Table of Content" pada
+   referensi. Dipakai untuk navigasi kategori & menu admin sidebar.
+
+5.4 Fotografi
+Dua mode berbeda, disesuaikan agar fungsional untuk e-commerce
+(catatan desainer: fotografi produk TIDAK boleh dibuat hitam-putih
+sepenuhnya karena pembeli perlu melihat warna asli produk):
+a. Foto Produk (Catalog, Detail Produk) — WAJIB berwarna asli, latar
+   putih/abu bersih, pencahayaan flat & konsisten. Ini murni
+   fungsional, brand hadir lewat card & badge di sekitarnya, bukan
+   lewat filter foto.
+b. Foto Brand/Hero/Editorial (Homepage hero, brand story strip) —
+   boleh diberi treatment duotone hitam-putih + blok warna kuning di
+   belakang subjek, mengikuti gaya referensi persis, untuk membangun
+   kepribadian brand.
+
+5.5 Elemen Dekoratif Khas Brand (dipakai terbatas & konsisten)
+- Ghost Number: angka besar outline tipis (mis. "01", "02") di sudut
+  section — HANYA di Homepage, sebagai penanda urutan cerita.
+- Tanda Kutip Besar ("): dipakai sebelum headline hero sebagai aksen
+  "pernyataan sikap brand".
+- Divider tipis: garis horizontal 1px, warna abu muda, memisahkan
+  section tanpa terasa berat.
+- Circle Frame + Color Block: foto dipotong lingkaran, diletakkan di
+  atas blok warna kuning solid — dipakai untuk foto hero & panel
+  login/register.
+
+5.6 Komponen UI
+
+Button Primary (CTA utama)
+  - Bentuk pill (fully rounded), bg brand-yellow, teks ink-black bold.
+  - Hover: bg berubah ke ink-black, teks jadi brand-yellow.
+  - Padding besar (mis. 14px x 28px), terasa "berani" bukan mungil.
+
+Button Secondary (Outline)
+  - Border ink-black 2px, bg transparan, teks ink-black.
+  - Hover: bg terisi ink-black, teks putih.
+
+Product Card
+  - Bg putih, radius 16px, shadow lembut (tidak tajam).
+  - Foto produk di atas (rasio 1:1), badge kuning kecil di pojok
+    kiri-atas jika perlu (mis. "Baru").
+  - Nama produk bold ink-black, harga bold dengan garis bawah tipis
+    brand-yellow, tombol CTA kecil di bawah.
+
+Category Badge (navigasi kategori)
+  - Rounded-square 20px radius, bg brand-yellow solid, ikon hitam di
+    tengah, label bold di bawah badge — replikasi langsung dari pola
+    "Table of Content" pada referensi.
+
+Navbar
+  - Bg putih, bawah diberi border tipis abu.
+  - Logo: wordmark ink-black + 1 titik/dot brand-yellow sebagai aksen
+    (meniru dua lingkaran kecil hitam-kuning di pojok kiri-atas
+    referensi).
+
+Footer
+  - Bg ink-black solid (blok warna penuh, seperti panel foto di
+    referensi), teks putih untuk konten, brand-yellow untuk link
+    aktif/judul kolom.
+
+Form Input
+  - Radius 8px, border 1px ink-black/abu, label di atas field (bold,
+    small caps, ukuran kecil).
+  - Focus state: border berubah brand-yellow 2px + ring tipis kuning
+    transparan.
+
+Modal (CRUD Admin)
+  - Overlay: hitam transparan 60%.
+  - Card modal putih, radius 16px, judul bold ink-black dengan garis
+    aksen brand-yellow tipis di bawah judul (turunan dari divider
+    tipis referensi).
+  - Tombol Simpan = Button Primary, Tombol Batal = Button Secondary.
+
+Status Badge (Order — warna fungsional, bukan dekoratif)
+  PENDING     -> abu (status-pending)
+  PAID         -> kuning solid (brand-yellow, teks ink-black)
+  PROCESSING    -> biru (status-info)
+  SHIPPED        -> biru (status-info)
+  COMPLETED       -> hijau (status-success)
+  FAILED/CANCELLED -> merah (status-error)
+
+5.7 Spacing & Grid
+- Grid 12 kolom (desktop), 4px sebagai satuan spacing dasar (4, 8, 12,
+  16, 24, 32, 48, 64...).
+- Breakpoint mengikuti default Tailwind: sm 640px, md 768px, lg 1024px,
+  xl 1280px.
+- White space digunakan generous di Homepage (editorial feel), lebih
+  padat/efisien di Admin Dashboard (data-density lebih penting di
+  sana daripada estetika napas).
+
+5.8 Motion / Interaksi
+- Tombol: scale 1.02 + transisi warna, 150ms ease-out saat hover.
+- Card produk: elevasi shadow naik tipis saat hover (tidak perlu
+  animasi besar).
+- Modal: fade + scale-in 200ms saat muncul.
+- Checkout & proses pembayaran: motion diminimalkan — prioritas
+  kecepatan & kejelasan, bukan "wow factor".
+
+5.9 Do's & Don'ts
+DO:
+- Pakai kuning sebagai aksen langka (10%), bukan warna dominan.
+- Pertahankan tipografi tebal-membulat untuk semua judul agar brand
+  konsisten di setiap halaman.
+- Simpan doodle & ghost number khusus untuk Homepage/brand storytelling.
+
+DON'T:
+- Jangan pakai teks putih di atas kuning (gagal kontras).
+- Jangan tambahkan doodle di halaman Checkout/Admin — brand tetap
+  hadir lewat warna & tipografi saja di area transaksional.
+- Jangan buat foto produk jadi hitam-putih — hanya foto brand/hero
+  yang boleh duotone.
+
+====================================================================
+END OF DOCUMENT
+====================================================================

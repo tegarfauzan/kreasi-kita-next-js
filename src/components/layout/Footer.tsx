@@ -1,0 +1,7 @@
+import Link from "next/link";
+import { products } from "@/data/catalog";
+import { Logo } from "./Logo";
+
+export function Footer() {
+  return <footer className="bg-ink-black py-14 text-white"><div className="page-shell"><div className="grid gap-10 border-b border-white/15 pb-10 md:grid-cols-2 lg:grid-cols-4"><div className="lg:col-span-2"><Logo light /><p className="mt-4 max-w-md leading-7 text-white/65">Ruang temu untuk karya lokal yang berani, hangat, dan punya sentuhan personal.</p></div><div><h2 className="font-display text-lg font-bold text-brand-yellow">Jelajahi</h2><ul className="mt-4 space-y-3 text-sm text-white/70"><li><Link href="/" className="hover:text-white">Beranda</Link></li><li><Link href="/catalog" className="hover:text-white">Katalog</Link></li><li><Link href="/orders" className="hover:text-white">Pesanan</Link></li></ul></div><div><h2 className="font-display text-lg font-bold text-brand-yellow">Kontak</h2><ul className="mt-4 space-y-3 text-sm text-white/70"><li>halo@kreasikita.id</li><li>Bandung, Indonesia</li><li>Senin–Jumat, 09.00–17.00</li></ul></div></div><div className="flex flex-col gap-5 pt-8 text-xs leading-5 text-white/50 lg:flex-row lg:justify-between"><p>© 2026 KreasiKita. Template demonstrasi.</p><p className="max-w-4xl lg:text-right">Foto Unsplash oleh {products.map((product, index) => <span key={product.id}>{index > 0 && ", "}<a href={product.photoPage} target="_blank" rel="noopener noreferrer" className="text-brand-yellow hover:underline">{product.photographer}</a></span>)}.</p></div></div></footer>;
+}

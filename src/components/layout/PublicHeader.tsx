@@ -1,0 +1,22 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { getAccountNavigation, type AccountRole } from "@/lib/account-navigation";
+import { Icon } from "../ui/Icon";
+import { Logo } from "./Logo";
+
+const navClass = (active: boolean) => active ? "border-b-2 border-brand-yellow py-2 font-bold text-ink-black" : "py-2 font-semibold text-body-gray transition hover:text-ink-black";
+
+export function PublicHeader({ showSearch = true, accountRole = null }: { showSearch?: boolean; accountRole?: AccountRole }) {
+  const pathname = usePathname() ?? "/";
+  const [open, setOpen] = useState(false);
+  useEffect(() => setOpen(false), [pathname]);
+  const catalogActive = pathname.startsWith("/catalog");
+  const ordersActive = pathname.startsWith("/orders");
+  const { href: accountHref, label: accountLabel, text: accountText } = getAccountNavigation(accountRole);
+  const accountActive = pathname === accountHref;
+
+  return <header className="sticky top-0 z-50 border-b border-black/10 bg-white/95 backdrop-blur"><div className="page-shell flex min-h-20 items-center justify-between gap-4"><Logo /><nav className="hidden items-center gap-7 lg:flex" aria-label="Navigasi utama"><Link href="/" className={navClass(pathname === "/")} aria-current={pathname === "/" ? "page" : undefined}>Beranda</Link><Link href="/catalog" className={navClass(catalogActive)} aria-current={pathname === "/catalog" ? "page" : undefined}>Katalog</Link><Link href="/orders" className={navClass(ordersActive)} aria-current={ordersActive ? "page" : undefined}>Pesanan</Link></nav><div className="hidden items-center gap-2 lg:flex">{showSearch && <form action="/catalog" method="get" className="relative" role="search"><label htmlFor="nav-search" className="sr-only">Cari produk</label><input id="nav-search" name="q" type="search" placeholder="Cari karya..." className="w-44 rounded-full border border-black/15 bg-canvas-gray/70 py-2.5 pl-10 pr-4 text-sm text-ink-black placeholder:text-body-gray/70 focus:border-brand-yellow focus:ring-3 focus:ring-brand-yellow/20 xl:w-52" /><Icon name="search" className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-black" /></form>}<Link href={accountHref} className={`rounded-full p-3 text-ink-black transition hover:bg-canvas-gray ${accountActive ? "bg-canvas-gray" : ""}`} aria-label={accountLabel} aria-current={accountActive ? "page" : undefined}><Icon name="user" /></Link><Link href="/checkout" className="rounded-full bg-ink-black p-3 text-white transition hover:bg-brand-yellow hover:text-ink-black" aria-label="Buka checkout" aria-current={pathname === "/checkout" ? "page" : undefined}><Icon name="cart" /></Link></div><button type="button" className="rounded-full border-2 border-ink-black p-2.5 text-ink-black lg:hidden" aria-expanded={open} aria-controls="mobile-menu" aria-label={open ? "Tutup menu navigasi" : "Buka menu navigasi"} onClick={() => setOpen((value) => !value)}><Icon name={open ? "close" : "menu"} /></button></div><div id="mobile-menu" className={`${open ? "block" : "hidden"} border-t border-black/10 bg-white lg:hidden`}><div className="page-shell space-y-4 py-6">{showSearch && <form action="/catalog" method="get" className="relative" role="search"><label htmlFor="mobile-search" className="sr-only">Cari produk</label><input id="mobile-search" name="q" type="search" placeholder="Cari produk kreatif..." className="form-input pl-11" /><Icon name="search" className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-ink-black" /></form>}<nav className="grid gap-1" aria-label="Navigasi mobile"><Link href="/" className="rounded-xl px-4 py-3 font-semibold text-ink-black hover:bg-canvas-gray">Beranda</Link><Link href="/catalog" className="rounded-xl px-4 py-3 font-semibold text-ink-black hover:bg-canvas-gray">Katalog</Link><Link href="/orders" className="rounded-xl px-4 py-3 font-semibold text-ink-black hover:bg-canvas-gray">Riwayat Pesanan</Link><Link href={accountHref} className={`rounded-xl px-4 py-3 font-semibold text-ink-black hover:bg-canvas-gray ${accountActive ? "bg-canvas-gray" : ""}`} aria-current={accountActive ? "page" : undefined}>{accountText}</Link><Link href="/checkout" className="rounded-xl bg-brand-yellow px-4 py-3 font-bold text-ink-black" aria-current={pathname === "/checkout" ? "page" : undefined}>Checkout</Link></nav></div></div></header>;
+}

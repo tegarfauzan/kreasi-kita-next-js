@@ -1,0 +1,12 @@
+"use client";
+
+import { useState, type FormEvent } from "react";
+import { Icon } from "../ui/Icon";
+import { useToast } from "../ui/ToastProvider";
+
+interface Profile { name: string; email: string; phone?: string | null; address?: string | null; city?: string | null; postalCode?: string | null }
+export function AdminProfileForm({ profile }: { profile: Profile }) {
+  const { showToast } = useToast(); const [saving, setSaving] = useState(false); const [error, setError] = useState("");
+  const submit = async (event: FormEvent<HTMLFormElement>) => { event.preventDefault(); if (!event.currentTarget.reportValidity()) return; setSaving(true); const values = new FormData(event.currentTarget); const response = await fetch("/api/profile", { method: "PUT", headers: { "content-type": "application/json" }, body: JSON.stringify({ name: values.get("name"), phone: values.get("phone"), address: profile.address ?? "", city: profile.city ?? "", postalCode: profile.postalCode ?? "" }) }); const result = await response.json() as { error?: string }; setSaving(false); if (!response.ok) return setError(result.error ?? "Profil belum dapat disimpan."); setError(""); showToast("Profil admin berhasil disimpan."); };
+  return <form className="mt-7 space-y-6" onSubmit={submit}><div className="grid gap-5 sm:grid-cols-2"><div><label className="form-label" htmlFor="admin-profile-name">Nama lengkap</label><input id="admin-profile-name" name="name" className="form-input" defaultValue={profile.name} required /></div><div><label className="form-label" htmlFor="admin-profile-email">Email</label><input id="admin-profile-email" className="form-input bg-canvas-gray/60" defaultValue={profile.email} disabled /></div><div><label className="form-label" htmlFor="admin-profile-phone">Nomor telepon</label><input id="admin-profile-phone" name="phone" className="form-input" defaultValue={profile.phone ?? ""} /></div><div><label className="form-label" htmlFor="admin-profile-role">Role</label><input id="admin-profile-role" className="form-input bg-canvas-gray/60" defaultValue="Admin" disabled /></div></div>{error && <p className="form-error" role="alert">{error}</p>}<div className="flex justify-end border-t border-black/10 pt-6"><button disabled={saving} className="btn-primary px-6 py-3 disabled:opacity-60">{saving ? "Menyimpan…" : "Simpan Profil"}</button></div><p className="flex items-center gap-2 text-xs"><Icon name="shield" className="h-4 w-4 text-status-success" /> Perubahan diproses melalui endpoint terproteksi.</p></form>;
+}

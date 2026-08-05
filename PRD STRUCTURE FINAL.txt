@@ -1,0 +1,763 @@
+====================================================================
+PRODUCT REQUIREMENT DOCUMENT (PRD)
+Next JS Fullstack - Web E-Commerce-Mini
+====================================================================
+Versi        : 1.0
+Tanggal      : 01 Agustus 2026
+Disusun oleh : Product Manager
+Status       : Siap Prompt
+====================================================================
+
+
+1. LATAR BELAKANG, TUJUAN, TARGET & KPI
+
+1.1 Latar Belakang
+Perkembangan transaksi jual-beli online di Indonesia terus meningkat, namun
+banyak pelaku usaha kecil dan menengah (UKM) belum memiliki platform
+e-commerce sendiri karena kompleksitas dan biaya pengembangan yang tinggi.
+"Web E-Commerce-Mini" hadir sebagai solusi platform jual-beli online skala
+kecil-menengah yang ringan, cepat dibangun, dan mudah dikelola, dengan fokus
+pada fitur inti: katalog produk, transaksi checkout, dan pembayaran online
+melalui payment gateway Midtrans.
+
+Produk ini dirancang sebagai aplikasi fullstack menggunakan Next.js 16,
+sehingga frontend dan backend berada dalam satu codebase, mempercepat proses
+development dan deployment terutama untuk kebutuhan MVP (Minimum Viable
+Product).
+
+1.2 Tujuan Produk (MVP)
+- Menyediakan platform e-commerce mini yang fungsional untuk menjual produk
+  secara online.
+- Memungkinkan customer melakukan browsing katalog, melihat detail produk,
+  checkout, dan membayar secara online melalui Midtrans tanpa perlu
+  membangun halaman pembayaran custom.
+- Menyediakan admin panel sederhana untuk mengelola produk, kategori, dan
+  pesanan melalui interaksi modal/pop-up agar development lebih ringkas.
+- Membangun fondasi teknis yang aman, scalable, dan mudah dikembangkan lebih
+  lanjut ke Phase 2.
+
+1.3 Target Pengguna
+a. Customer (End User) - individu yang ingin berbelanja produk secara
+   online, melakukan pencarian produk, checkout, dan pembayaran.
+b. Admin (Pengelola Toko) - pemilik/pengelola bisnis yang bertanggung jawab
+   mengelola master data produk, kategori, pesanan, dan pengaturan toko.
+
+1.4 Success Metrics (KPI)
+- Checkout Completion Rate >= 60% dari total transaksi yang dimulai.
+- Payment Success Rate via Midtrans >= 95%.
+- Rata-rata waktu load halaman katalog/produk < 2 detik (jaringan standar).
+- Admin dapat menyelesaikan 1 siklus CRUD produk (create-update-delete)
+  dalam < 1 menit menggunakan modal.
+- Uptime aplikasi >= 99% pasca-deployment di Hostinger.
+- Zero critical security incident pada modul autentikasi dan pembayaran
+  selama 3 bulan pertama pasca-launch.
+
+
+2. USER STORIES / USE CASE
+
+Customer:
+- Sebagai customer, saya ingin melihat daftar produk di homepage agar saya
+  bisa mengetahui produk apa saja yang dijual.
+- Sebagai customer, saya ingin membuka halaman catalog dan mencari/memfilter
+  produk agar saya mudah menemukan produk yang saya cari.
+- Sebagai customer, saya ingin membuka halaman detail produk agar saya bisa
+  melihat informasi lengkap (harga, deskripsi, stok, gambar) sebelum membeli.
+- Sebagai customer, saya ingin mendaftar (register) dan login agar saya bisa
+  melakukan transaksi dan melihat riwayat pesanan saya.
+- Sebagai customer, saya ingin melakukan checkout produk yang saya pilih
+  agar saya bisa menyelesaikan pembelian.
+- Sebagai customer, saya ingin diarahkan ke halaman pembayaran Midtrans agar
+  saya bisa membayar dengan metode pembayaran pilihan saya (VA, e-wallet,
+  kartu kredit, dsb).
+- Sebagai customer, saya ingin diarahkan kembali ke homepage setelah proses
+  pembayaran selesai agar saya tahu transaksi saya sudah berhasil dimulai.
+- Sebagai customer, saya ingin melihat riwayat pesanan saya beserta
+  statusnya agar saya bisa memantau transaksi saya.
+
+Admin:
+- Sebagai admin, saya ingin login ke admin panel agar saya bisa mengakses
+  fitur pengelolaan toko.
+- Sebagai admin, saya ingin menambah, mengubah, dan menghapus produk melalui
+  pop-up/modal agar pengelolaan data lebih cepat tanpa berpindah halaman.
+- Sebagai admin, saya ingin menambah, mengubah, dan menghapus kategori
+  produk melalui modal agar struktur katalog tetap rapi.
+- Sebagai admin, saya ingin melihat dan mengelola daftar pesanan customer
+  beserta statusnya agar saya bisa memproses pesanan dengan baik.
+- Sebagai admin, saya ingin mengakses halaman settings agar saya bisa
+  mengubah konfigurasi dasar toko (nama toko, kontak, dsb).
+- Sebagai admin, saya ingin logout dari sistem agar akun saya tetap aman
+  saat tidak digunakan.
+
+
+3. BUSINESS RULES
+
+1. Customer wajib login/register sebelum menyelesaikan proses checkout
+   (guest checkout tidak didukung di MVP).
+2. Produk hanya dapat dibeli jika stok > 0. Sistem menolak checkout untuk
+   produk dengan stok habis.
+3. Harga produk yang berlaku adalah harga pada saat produk ditambahkan ke
+   checkout, bukan harga real-time saat pembayaran dikonfirmasi.
+4. Setiap proses checkout menghasilkan 1 Order dengan status awal PENDING
+   sebelum customer diarahkan ke Midtrans.
+5. Status Order hanya boleh berubah menjadi PAID setelah menerima notifikasi
+   valid dari Midtrans (via webhook/callback), bukan berdasarkan aksi
+   redirect front-end semata.
+6. Stok produk otomatis berkurang setelah status Order menjadi PAID (bukan
+   saat checkout dibuat), untuk menghindari stok "tersandera" oleh transaksi
+   yang belum dibayar.
+7. Order yang tidak dibayar dalam batas waktu tertentu (mengikuti masa aktif
+   transaksi Midtrans, default 24 jam) otomatis berubah status menjadi
+   EXPIRED.
+8. Hanya user dengan role admin yang dapat mengakses admin panel dan
+   melakukan operasi CRUD terhadap produk, kategori, dan pesanan.
+9. Admin tidak dapat menghapus permanen produk yang masih terikat pada Order
+   aktif (histori transaksi harus tetap konsisten) - sistem menggunakan soft
+   delete/nonaktifkan (isActive = false) untuk produk yang sudah pernah
+   terjual.
+10. Email wajib unik untuk setiap akun, baik customer maupun admin.
+
+
+4. USER ROLES & PERMISSION
+
++----------+-------------------------------------------------------------+
+| Role     | Permission                                                   |
++----------+-------------------------------------------------------------+
+| Admin    | - Login ke admin panel                                       |
+|          | - CRUD produk (create/update/delete via modal)               |
+|          | - CRUD kategori (create/update/delete via modal)             |
+|          | - Melihat & update status pesanan (order)                    |
+|          | - Akses & ubah halaman settings toko                         |
+|          | - Logout                                                      |
+|          | - TIDAK melakukan checkout sebagai customer di akun sama      |
++----------+-------------------------------------------------------------+
+| Customer | - Melihat homepage, catalog, detail produk (tanpa login)      |
+|          | - Register & login                                           |
+|          | - Checkout produk (wajib login)                               |
+|          | - Melakukan pembayaran via Midtrans                           |
+|          | - Melihat riwayat pesanan miliknya sendiri                    |
+|          | - Mengubah profil miliknya sendiri                             |
+|          | - TIDAK bisa mengakses admin panel                             |
++----------+-------------------------------------------------------------+
+
+Catatan teknis: Role disimpan pada tabel User (enum: ADMIN, CUSTOMER).
+Middleware/route guard di Next.js memvalidasi role pada setiap request ke
+/admin/** dan API route terkait admin.
+
+
+5. USER FLOW (ALUR END-TO-END)
+
+5.1 Customer Flow
+
+[Homepage] -> [Catalog] -> [Detail Halaman Produk] -> [Login/Register]
+   -> [Checkout] -> [Midtrans Payment Page] -> [Redirect] -> [Homepage]
+
+Detail:
+1. Customer membuka Homepage, melihat produk unggulan/kategori.
+2. Customer masuk ke Catalog untuk melihat semua produk / melakukan
+   pencarian & filter.
+3. Customer klik produk -> masuk ke Detail Halaman (deskripsi, harga,
+   stok, gambar, tombol beli/checkout).
+4. Jika belum login, sistem mengarahkan ke halaman Login/Register terlebih
+   dahulu.
+5. Setelah login, customer melanjutkan ke halaman Checkout (ringkasan
+   pesanan, alamat, metode pembayaran).
+6. Sistem membuat Order berstatus PENDING dan generate Midtrans Snap
+   Transaction, lalu redirect customer ke halaman pembayaran Midtrans
+   (menggunakan Snap page bawaan Midtrans, tanpa halaman success custom).
+7. Setelah pembayaran (sukses/gagal/pending), Midtrans mengirim notifikasi
+   webhook ke backend untuk update status Order, dan customer diarahkan
+   kembali ke Homepage.
+
+5.2 Admin Flow
+
+[Login] -> [Admin Panel: CRUD via Modal] -> [Settings] -> [Logout]
+
+Detail:
+1. Admin membuka halaman Login (sistem login sama, dibedakan lewat role).
+2. Setelah login berhasil, admin diarahkan ke Admin Panel (dashboard ringkas
+   + tabel data).
+3. Admin melakukan operasi Create/Update/Delete pada produk, kategori, dan
+   pesanan melalui pop-up/modal di atas halaman yang sama (tanpa reload
+   halaman penuh) agar workflow lebih cepat dan sederhana.
+4. Admin dapat membuka halaman Settings untuk mengatur konfigurasi dasar
+   toko.
+5. Admin melakukan Logout untuk mengakhiri sesi.
+
+
+6. HALAMAN & WIREFRAME REFERENCE
+
++----+----------------------+-------------------------+-----------------+
+| No | Halaman              | Route (contoh)          | Akses           |
++----+----------------------+-------------------------+-----------------+
+| 1  | Homepage             | /                        | Public          |
+| 2  | Catalog              | /catalog                 | Public          |
+| 3  | Detail Produk        | /catalog/[slug]           | Public          |
+| 4  | Login                | /login                    | Public (guest)  |
+| 5  | Register             | /register                  | Public (guest)  |
+| 6  | Checkout             | /checkout                  | Customer (auth) |
+| 7  | Midtrans Payment     | (redirect Snap Midtrans)  | Customer (auth) |
+| 8  | Homepage (redirect)  | /                          | Public          |
+| 9  | Admin Panel          | /admin                     | Admin only      |
+| 10 | Settings             | /admin/settings            | Admin only      |
++----+----------------------+-------------------------+-----------------+
+
+Catatan: Detail wireframe visual (mockup) tidak termasuk dalam dokumen ini
+dan dapat disusun terpisah (mis. via Figma); struktur halaman di atas
+menjadi acuan utama untuk routing Next.js App Router.
+
+
+7. RUANG LINGKUP (SCOPE & OUT OF SCOPE)
+
+7.1 In Scope (Phase 1)
+- Autentikasi (Register, Login, Logout, Session/JWT Management)
+- Homepage dengan highlight produk
+- Katalog produk dengan pencarian & filter kategori sederhana
+- Halaman detail produk
+- Checkout (order sederhana per transaksi)
+- Integrasi pembayaran Midtrans (Snap, redirect, webhook/callback)
+- Admin Panel: CRUD produk & kategori via modal, manajemen status pesanan
+- Halaman Settings dasar untuk admin
+- Role-based access control (Admin vs Customer)
+
+7.2 Out of Scope (Phase Berikutnya - JANGAN PERNAH DIKERJAKAN INI DULU!!!)
+- Multi-vendor / marketplace (banyak seller)
+- Sistem review & rating produk
+- Wishlist / produk favorit
+- Sistem diskon, voucher, dan kupon
+- Multi-currency & multi-language
+- Integrasi ongkos kirim otomatis (RajaOngkir, dsb) & tracking pengiriman
+  real-time
+- Notifikasi email/SMS/WhatsApp otomatis
+- Dashboard analitik & laporan penjualan lanjutan
+- Mobile app (native)
+- Live chat / customer service terintegrasi
+- Payment gateway lain di luar Midtrans
+
+
+8. FITUR & FUNCTIONAL REQUIREMENT (Prioritas MVP)
+
+8.1 MVP (Wajib Phase 1)
+
+A. Authentication
+   - Register (nama, email, password) dengan validasi Zod.
+   - Login (email & password) menghasilkan session/JWT.
+   - Logout (invalidasi session/token).
+   - Password disimpan ter-hash (bcrypt).
+   - Proteksi route berbasis role (middleware Next.js).
+
+B. Katalog & Produk (Customer-facing)
+   - Homepage menampilkan produk unggulan.
+   - Halaman catalog dengan list produk, pencarian by nama, filter by
+     kategori.
+   - Halaman detail produk (gambar, harga, deskripsi, stok, tombol
+     checkout).
+
+C. Checkout & Order
+   - Customer memilih produk & jumlah, lanjut ke checkout.
+   - Sistem membuat Order (status PENDING) & menghitung total harga.
+   - Sistem generate transaksi Midtrans Snap dan redirect customer ke
+     halaman pembayaran Midtrans.
+
+D. Midtrans Payment Integration
+   - Integrasi Midtrans Snap (redirect ke halaman bawaan Midtrans, tanpa
+     membuat halaman success custom).
+   - Endpoint webhook/callback untuk menerima notifikasi status transaksi
+     dari Midtrans.
+   - Update status Order otomatis berdasarkan notifikasi (settlement/
+     capture -> PAID, deny/expire/cancel -> status terkait).
+   - Verifikasi signature key notifikasi Midtrans untuk keamanan.
+
+E. Admin Panel
+   - Login admin (menggunakan sistem auth yang sama, dibedakan role).
+   - CRUD Produk melalui modal/pop-up (tambah, edit, hapus/nonaktifkan).
+   - CRUD Kategori melalui modal/pop-up.
+   - Kelola daftar Order & update status pesanan (mis. PROCESSING ->
+     SHIPPED -> COMPLETED).
+   - Halaman Settings dasar (informasi toko).
+
+8.2 Phase 2 (Future - JANGAN DIKERJAKAN YANG INI!!!)
+   - Review & rating produk
+   - Wishlist
+   - Voucher/diskon & promo
+   - Dashboard analitik penjualan
+   - Notifikasi email/SMS otomatis
+   - Integrasi ongkir & tracking
+   - Multi-payment gateway
+   - Multi-admin dengan granular permission (super admin, staff, dsb)
+
+
+9. TEKNOLOGI & INTEGRASI PIHAK KETIGA
+
++--------------------------+----------------------------------------------+
+| Layer                    | Teknologi                                     |
++--------------------------+----------------------------------------------+
+| Framework Fullstack       | Next.js 16 (App Router, Route Handlers)       |
+| Bahasa                    | TypeScript                                     |
+| Styling                   | Tailwind CSS                                   |
+| ORM                       | Prisma ORM                                     |
+| Database                  | MySQL (rekomendasi, kompatibel dgn Hostinger)  |
+| Validasi Input            | Zod                                             |
+| Autentikasi               | JWT (jose/jsonwebtoken) + bcrypt (hash password)|
+| Payment Gateway           | Midtrans (Snap)                                 |
+| Package Manager           | NPM                                             |
+| Hosting/Deployment        | Hostinger Shared Hosting (Business Web App     |
+|                           | Node.js plan)                                   |
++--------------------------+----------------------------------------------+
+
+Catatan: Prisma mendukung MySQL secara native dan cocok dipasangkan dengan
+Hostinger Shared Hosting Business (umumnya menyediakan database MySQL).
+Jika Hostinger yang digunakan menyediakan PostgreSQL, provider Prisma cukup
+disesuaikan di schema.prisma tanpa mengubah arsitektur aplikasi secara
+signifikan.
+
+
+10. ERD (ENTITY RELATIONSHIP DIAGRAM)
+
++----------------+        +----------------+        +----------------+
+|     User       |        |    Category     |        |    Product      |
++----------------+        +----------------+        +----------------+
+| id (PK)        |        | id (PK)         |        | id (PK)         |
+| name           |        | name            |<------+| categoryId (FK) |
+| email (unique) |        | slug (unique)   |  1   N | name            |
+| password       |        | createdAt       |        | slug (unique)   |
+| role (enum)    |        | updatedAt       |        | description     |
+| createdAt      |        +----------------+        | price           |
+| updatedAt      |                                    | stock           |
++----------------+                                    | imageUrl        |
+        | 1                                           | isActive        |
+        |                                              | createdAt       |
+        | N                                            | updatedAt       |
++----------------+                                    +----------------+
+|     Order       |                                            | 1
++----------------+                                            |
+| id (PK)         |                                            | N
+| userId (FK)     |        +----------------+          +----------------+
+| status (enum)   |        |   OrderItem     |          |  (Product)     |
+| totalAmount     |<------+| id (PK)         +--------->|                |
+| midtransOrderId |  1   N | orderId (FK)    |  N    1  |                |
+| snapToken       |        | productId (FK)  |          +----------------+
+| createdAt       |        | quantity        |
+| updatedAt       |        | priceAtPurchase |
++----------------+        +----------------+
+
++----------------+
+|    Payment      |
++----------------+
+| id (PK)         |
+| orderId (FK)    |   -- 1-to-1 dengan Order
+| transactionId   |
+| paymentType     |
+| transactionStatus|
+| rawResponse (JSON)|
+| createdAt        |
++----------------+
+
+Relasi:
+- User (1) - (N) Order
+- Order (1) - (N) OrderItem
+- Product (1) - (N) OrderItem
+- Category (1) - (N) Product
+- Order (1) - (1) Payment
+
+
+11. BACKEND ARSITEKTUR
+
+Pattern: Layered Architecture di dalam Next.js API Route Handlers
+(folder app/api/**)
+
+app/
+ |- api/
+     |- auth/
+     |    |- register/route.ts
+     |    |- login/route.ts
+     |    |- logout/route.ts
+     |- products/
+     |    |- route.ts            (GET list, POST create - admin)
+     |    |- [id]/route.ts       (GET detail, PUT update, DELETE - admin)
+     |- categories/
+     |    |- route.ts
+     |    |- [id]/route.ts
+     |- orders/
+     |    |- route.ts            (POST create order/checkout)
+     |    |- [id]/route.ts       (GET detail, PUT update status - admin)
+     |- midtrans/
+          |- notification/route.ts  (webhook dari Midtrans)
+          |- snap-token/route.ts    (generate token transaksi)
+
+lib/
+ |- prisma.ts        (Prisma client singleton)
+ |- auth.ts          (helper JWT sign/verify, session)
+ |- midtrans.ts       (Midtrans client config)
+ |- validation/       (Zod schema per entity)
+
+middleware.ts          (proteksi route /admin/** & API admin, verifikasi
+                         JWT & role)
+
+Prinsip:
+- Setiap route handler memvalidasi input dengan Zod sebelum diproses.
+- Service layer memisahkan logika bisnis dari route handler agar mudah
+  diuji & di-maintain.
+- Prisma Client digunakan sebagai satu-satunya akses ke database (tanpa
+  raw query kecuali benar-benar diperlukan).
+- Idempotency pada webhook Midtrans (mencegah update ganda jika notifikasi
+  dikirim lebih dari sekali).
+
+
+12. FRONTEND ARSITEKTUR
+
+app/
+ |- (public)/
+ |    |- page.tsx                 (Homepage)
+ |    |- catalog/page.tsx
+ |    |- catalog/[slug]/page.tsx  (Detail Produk)
+ |    |- login/page.tsx
+ |    |- register/page.tsx
+ |- (customer)/
+ |    |- checkout/page.tsx
+ |    |- orders/page.tsx          (riwayat pesanan customer)
+ |- admin/
+      |- page.tsx                 (dashboard/list produk & order)
+      |- settings/page.tsx
+
+components/
+ |- ui/                          (button, input, modal, table, dsb)
+ |- product/                     (ProductCard, ProductGrid, ProductDetail)
+ |- checkout/                    (CheckoutForm, OrderSummary)
+ |- admin/                       (ProductFormModal, CategoryFormModal,
+                                    OrderTable)
+
+store/
+ |- (state management ringan, mis. Zustand, untuk auth state di client)
+
+Prinsip:
+- Modal/Pop-up untuk seluruh operasi CRUD admin (tambah/edit/hapus)
+  menggunakan komponen Modal reusable - tidak membuat halaman terpisah
+  untuk create/edit.
+- Server Components digunakan untuk fetching data awal (SEO-friendly,
+  performant); Client Components hanya untuk bagian interaktif (form,
+  modal, filter).
+- Tailwind CSS untuk seluruh styling, tanpa CSS module terpisah kecuali
+  diperlukan.
+
+
+13. API CONTRACT
+
+Format response standar:
+Success : { "success": true, "data": {...} }
+Error   : { "success": false, "error": { "code": "STRING", "message": "STRING" } }
+
+13.1 Authentication
+POST /api/auth/register
+  Body     : { name, email, password }
+  Response : 201 { success: true, data: { id, name, email } }
+
+POST /api/auth/login
+  Body     : { email, password }
+  Response : 200 { success: true, data: { token, user: { id, name, email,
+             role } } }
+
+POST /api/auth/logout
+  Response : 200 { success: true }
+
+13.2 Products
+GET  /api/products?search=&category=&page=
+  Response : 200 { success: true, data: { items: [...], total, page } }
+
+GET  /api/products/[id]
+  Response : 200 { success: true, data: { ...product } }
+
+POST /api/products        (Admin only)
+  Body     : { name, categoryId, price, stock, description, imageUrl }
+  Response : 201 { success: true, data: { ...product } }
+
+PUT  /api/products/[id]   (Admin only)
+  Body     : { name?, categoryId?, price?, stock?, description?, imageUrl?,
+             isActive? }
+  Response : 200 { success: true, data: { ...product } }
+
+DELETE /api/products/[id] (Admin only)
+  Response : 200 { success: true }
+
+13.3 Categories
+GET/POST /api/categories, GET/PUT/DELETE /api/categories/[id]
+  (Pola sama seperti Products, operasi write khusus Admin only)
+
+13.4 Orders / Checkout
+POST /api/orders            (Customer, auth required)
+  Body     : { items: [{ productId, quantity }] }
+  Response : 201 { success: true, data: { orderId, snapToken,
+             redirectUrl } }
+
+GET  /api/orders            (Customer: order miliknya | Admin: semua order)
+GET  /api/orders/[id]
+PUT  /api/orders/[id]/status (Admin only)
+  Body     : { status }
+
+13.5 Midtrans
+POST /api/midtrans/notification   (Webhook Midtrans, tanpa auth user,
+                                    diverifikasi via signature key)
+  Body     : payload notifikasi Midtrans standar
+  Response : 200 { success: true }
+
+
+14. STATE DIAGRAM (STATUS ORDER)
+
+[PENDING] --(settlement/capture)--> [PAID] --(admin proses)--> [PROCESSING]
+                                                                     |
+                                                                     v
+                                                               [SHIPPED]
+                                                                     |
+                                                                     v
+                                                              [COMPLETED]
+   |
+   |--(timeout/expire dari Midtrans)--> [EXPIRED]
+   |--(pembayaran ditolak)--> [FAILED]
+   |--(dibatalkan sebelum bayar)--> [CANCELLED]
+
+Detail transisi:
+- PENDING -> PAID       : dipicu notifikasi Midtrans (transaction_status =
+                           settlement/capture)
+- PENDING -> EXPIRED    : dipicu notifikasi Midtrans (transaction_status =
+                           expire)
+- PENDING -> FAILED     : dipicu notifikasi Midtrans (transaction_status =
+                           deny)
+- PENDING -> CANCELLED  : dipicu manual oleh customer/admin sebelum bayar
+- PAID -> PROCESSING    : diubah manual oleh admin (mulai proses pesanan)
+- PROCESSING -> SHIPPED : diubah manual oleh admin
+- SHIPPED -> COMPLETED  : diubah manual oleh admin (konfirmasi selesai)
+
+
+15. SEQUENCE DIAGRAM (CHECKOUT & PEMBAYARAN)
+
+Customer      Frontend(Next.js)    Backend API      Prisma/DB    Midtrans
+   |                 |                   |               |            |
+   |--pilih produk-->|                   |               |            |
+   |--klik checkout->|                   |               |            |
+   |                 |--POST /orders---->|               |            |
+   |                 |                   |--create Order->|           |
+   |                 |                   |  (PENDING)     |           |
+   |                 |                   |--create Snap Transaction-->|
+   |                 |                   |<--snapToken, redirectUrl---|
+   |                 |<--snapToken-------|               |            |
+   |<--redirect Snap-|                   |               |            |
+   |------------ pembayaran dilakukan di halaman Midtrans ----------->|
+   |                 |                   |<---webhook notification----|
+   |                 |                   |--verify signature          |
+   |                 |                   |--update Order status------>|
+   |                 |                   |  (PAID/FAILED/EXPIRED)     |
+   |<----------------------- redirect ke Homepage --------------------|
+
+
+16. ERROR HANDLING
+
+Prinsip umum:
+- Semua error API mengikuti format standar (lihat bagian 13) dengan HTTP
+  status code yang sesuai.
+- Validasi input menggunakan Zod; error validasi dikembalikan sebagai 400
+  Bad Request dengan detail field yang gagal.
+
++---------------------------+------+-----------------------------------+
+| Kasus                     | Code | Pesan                              |
++---------------------------+------+-----------------------------------+
+| Validasi input gagal       | 400  | "Validation error" + detail field  |
+| Belum login/token invalid  | 401  | "Unauthorized"                     |
+| Role tidak sesuai          | 403  | "Forbidden: admin only"            |
+| Data tidak ditemukan       | 404  | "Resource not found"               |
+| Email sudah terdaftar      | 409  | "Email already registered"         |
+| Stok tidak cukup           | 409  | "Insufficient stock"                |
+| Signature Midtrans invalid | 401  | "Invalid notification signature"    |
+| Server error tak terduga   | 500  | "Internal server error"             |
++---------------------------+------+-----------------------------------+
+
+Frontend:
+- Menampilkan toast/alert untuk setiap error dari API dengan pesan yang
+  human-readable (bukan raw error message backend).
+- Form menampilkan error per-field hasil validasi Zod (schema client-side
+  & server-side sinkron).
+
+
+17. SECURITY REQUIREMENT
+
+1. Password di-hash menggunakan bcrypt (salt rounds >= 10), tidak pernah
+   disimpan/di-log dalam bentuk plain text.
+2. Autentikasi menggunakan JWT dengan masa berlaku terbatas (mis. 7 hari)
+   disimpan di httpOnly cookie (mencegah akses via JavaScript/XSS).
+3. Middleware Next.js memvalidasi token & role pada setiap request ke route
+   admin dan API sensitif.
+4. Semua input divalidasi & disanitasi menggunakan Zod, baik di client
+   maupun server (server-side validation wajib, client-side untuk UX).
+5. Endpoint webhook Midtrans (/api/midtrans/notification) wajib
+   memverifikasi signature key sesuai dokumentasi Midtrans untuk memastikan
+   notifikasi valid dan bukan dari pihak tidak dikenal.
+6. Environment variable (kredensial DB, JWT secret, Midtrans Server Key)
+   disimpan di .env dan tidak pernah di-commit ke repository.
+7. Proteksi terhadap SQL Injection otomatis tercapai melalui penggunaan
+   Prisma ORM (parameterized query).
+8. Rate limiting sederhana pada endpoint login/register untuk mencegah
+   brute force.
+9. HTTPS wajib diaktifkan di environment production (SSL dari Hostinger).
+10. CORS dikonfigurasi ketat, hanya mengizinkan origin resmi aplikasi.
+
+
+18. DATABASE CONSTRAINT
+
+- User.email          : UNIQUE, NOT NULL
+- User.role            : ENUM('ADMIN','CUSTOMER'), NOT NULL, default
+                          CUSTOMER
+- Product.slug         : UNIQUE, NOT NULL
+- Product.price        : DECIMAL, NOT NULL, CHECK (price >= 0)
+- Product.stock        : INTEGER, NOT NULL, default 0, CHECK (stock >= 0)
+- Category.slug        : UNIQUE, NOT NULL
+- Order.status          : ENUM('PENDING','PAID','PROCESSING','SHIPPED',
+                          'COMPLETED','FAILED','EXPIRED','CANCELLED'),
+                          NOT NULL, default PENDING
+- Order.userId           : FOREIGN KEY -> User.id, ON DELETE RESTRICT
+- OrderItem.orderId       : FOREIGN KEY -> Order.id, ON DELETE CASCADE
+- OrderItem.productId     : FOREIGN KEY -> Product.id, ON DELETE RESTRICT
+- Payment.orderId         : FOREIGN KEY -> Order.id, UNIQUE (1-to-1),
+                            ON DELETE CASCADE
+- Product.categoryId      : FOREIGN KEY -> Category.id, ON DELETE RESTRICT
+                            (kategori tidak bisa dihapus jika masih ada
+                            produk aktif)
+
+
+19. DESIGN STYLE / DESIGN SYSTEM
+
+- Framework styling: Tailwind CSS (utility-first), tanpa custom CSS
+  berlebihan.
+- Komponen reusable.
+- Responsive: mobile-first, breakpoint mengikuti default Tailwind (sm, md,
+  lg, xl).
+- Modal admin didesain ringkas dengan validasi form real-time (error
+  muncul langsung di bawah field terkait).
+
+
+20. NON-FUNCTIONAL REQUIREMENT
+
+- Performance: First Contentful Paint < 2 detik pada koneksi standar;
+  gambar produk menggunakan next/image dengan lazy loading.
+- Scalability: Arsitektur backend modular sehingga mudah dipindah dari
+  shared hosting ke VPS/cloud jika traffic meningkat.
+- Availability: Target uptime >= 99% (bergantung pada SLA Hostinger).
+- Compatibility: Mendukung browser modern (Chrome, Firefox, Safari, Edge
+  versi 2 tahun terakhir).
+- Maintainability: Kode mengikuti TypeScript strict mode & struktur folder
+  konsisten agar mudah dikembangkan ke Phase 2.
+- SEO dasar: meta tag, semantic HTML, server-side rendering untuk halaman
+  publik (homepage, catalog, detail produk).
+- Accessibility dasar: kontras warna memadai, elemen form memiliki label
+  yang jelas.
+
+
+21. DEPLOYMENT PLAN
+
+Platform: Hostinger Shared Hosting - Business Plan (mendukung Web App
+Node.js)
+
+Tahapan:
+1. Setup domain & aktivasi plan Business di Hostinger yang mendukung Web
+   App Node.js.
+2. Buat database MySQL melalui hPanel Hostinger, catat kredensial (host,
+   user, password, nama DB).
+3. Setup environment variables production (.env): DATABASE_URL, JWT_SECRET,
+   MIDTRANS_SERVER_KEY, MIDTRANS_CLIENT_KEY, MIDTRANS_IS_PRODUCTION,
+   NEXT_PUBLIC_APP_URL.
+4. Push/upload source code ke server (via Git deployment jika didukung,
+   atau upload manual/FTP/SSH sesuai fitur hPanel).
+5. Jalankan `npm install` dan `npm run build` di server (atau build di CI
+   lalu upload hasil build, tergantung batasan shared hosting).
+6. Konfigurasi Node.js App di hPanel Hostinger: set entry point (mis.
+   `next start` atau custom server.js sesuai kebutuhan Next.js di shared
+   hosting), set port sesuai yang disediakan Hostinger.
+7. Jalankan migration Prisma (`npx prisma migrate deploy`) ke database
+   production.
+8. Aktifkan SSL (HTTPS) melalui fitur Hostinger (Let's Encrypt otomatis).
+9. Daftarkan URL webhook Midtrans (https://domain.com/api/midtrans/
+   notification) di dashboard Midtrans (Payment Notification URL),
+   gunakan Server Key & Client Key sesuai environment (sandbox saat
+   testing, production saat live).
+10. Uji end-to-end flow: register -> login -> checkout -> pembayaran
+    sandbox Midtrans -> validasi status order ter-update.
+11. Setelah lolos uji, ganti Midtrans ke mode production (server key &
+    client key production).
+
+Catatan: Karena keterbatasan shared hosting dibanding VPS, disarankan
+memonitor resource (memory/CPU) aplikasi Next.js secara berkala dan siap
+melakukan upgrade plan/migrasi ke VPS jika traffic bertumbuh signifikan
+pasca-MVP.
+
+
+22. DEVELOPMENT ROADMAP & MILESTONE
+
+Plan 1 - Foundation & Authentication (Minggu 1-2)
+- Setup project Next.js 16 + TypeScript + Tailwind + Prisma + Zod
+- Setup database schema & migration awal (User, Category, Product)
+- Implementasi Register, Login, Logout, middleware role-based
+
+Plan 2 - Catalog & Product Pages (Minggu 3)
+- Homepage, halaman Catalog (search & filter), halaman Detail Produk
+- API GET products & categories (public)
+
+Plan 3 - Checkout & Midtrans Integration (Minggu 4-5)
+- Halaman Checkout, API create Order
+- Integrasi Midtrans Snap (generate token, redirect)
+- Endpoint webhook notification + update status order otomatis
+
+Plan 4 - Admin Panel (Minggu 6-7)
+- Layout Admin Panel & proteksi akses admin
+- CRUD Produk & Kategori via modal
+- Manajemen status pesanan (list order + update status)
+- Halaman Settings dasar
+
+Plan 5 - Testing, Hardening & Deployment (Minggu 8)
+- QA end-to-end (customer flow & admin flow)
+- Security review (mengacu ke bagian 17)
+- Deployment ke Hostinger (sandbox Midtrans dulu, lalu production)
+- UAT (User Acceptance Test) & sign-off
+
+
+23. ACCEPTANCE CRITERIA
+
+AC-1 Register
+- Given customer belum memiliki akun, When mengisi form register dengan
+  data valid, Then akun berhasil dibuat dan customer dapat login.
+- Given email sudah terdaftar, When mencoba register dengan email yang
+  sama, Then sistem menampilkan error "Email already registered" dan
+  tidak membuat akun baru.
+
+AC-2 Login
+- Given customer/admin memiliki akun valid, When login dengan email &
+  password benar, Then sistem mengembalikan token & mengarahkan sesuai
+  role (customer -> homepage, admin -> admin panel).
+- Given kredensial salah, When mencoba login, Then sistem menampilkan
+  error dan tidak memberikan akses.
+
+AC-3 Checkout & Pembayaran
+- Given customer login dan produk tersedia (stok > 0), When melakukan
+  checkout, Then sistem membuat Order berstatus PENDING dan mengarahkan
+  ke halaman pembayaran Midtrans.
+- Given pembayaran berhasil di Midtrans, When webhook notification
+  diterima dan signature valid, Then status Order berubah menjadi PAID
+  dan stok produk berkurang sesuai quantity.
+- Given produk stok habis, When customer mencoba checkout produk
+  tersebut, Then sistem menolak dan menampilkan pesan "Insufficient
+  stock".
+
+AC-4 Admin CRUD Produk
+- Given admin login, When membuka Admin Panel dan klik "Tambah Produk",
+  Then modal form muncul tanpa reload halaman.
+- Given admin mengisi form produk dengan data valid dan submit, Then
+  produk baru tersimpan dan langsung muncul di tabel/list tanpa reload
+  halaman penuh.
+- Given admin menghapus produk yang belum pernah terjual, Then produk
+  terhapus dari list dan tidak lagi tampil di catalog customer.
+
+AC-5 Role-Based Access
+- Given user dengan role customer, When mencoba mengakses route /admin,
+  Then sistem menolak akses (redirect/403).
+- Given user belum login, When mencoba mengakses halaman checkout, Then
+  sistem mengarahkan ke halaman login terlebih dahulu.
+
+====================================================================
+END OF DOCUMENT
+====================================================================
